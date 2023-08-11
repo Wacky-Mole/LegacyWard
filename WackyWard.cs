@@ -21,10 +21,10 @@ namespace LegacyWard
     [BepInPlugin(GUID, NAME, VERSION)]
     public class WackyWard : BaseUnityPlugin
     {
-        internal const string GUID = "kg.WackyWard";
-        internal const string NAME = "kg.WackyWard";
+        internal const string GUID = "WackyMole.LegacyWard";
+        internal const string NAME = "WackyMole.LegacyWard";
         internal const string VERSION = "1.0.0";
-        internal const string Author = "Wackymole";
+        internal const string Author = "WackyMole";
         private static AssetBundle asset;
         private static AssetBundle asset_vfx;
         private static GameObject Ward_Prefab;
