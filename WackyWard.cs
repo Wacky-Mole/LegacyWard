@@ -62,7 +62,7 @@ namespace LegacyWard
             _thistype = this;
             asset = GetAssetBundle("wackyward");
             asset_vfx = GetAssetBundle("wackywardvfx");
-            WardMaxFuel = config("Ward", "WardMaxFuel", 60 * 60 * 24 * 7, "Ward Max Fuel");
+            WardMaxFuel = config("Ward", "WardMaxFuel", 60 * 60 * 24 * 7*3, "Ward Max Fuel - 3 Weeks or 21 days");
             WardDefaultRadius = config("Ward", "WardDefaultRadius", 30, "Ward Default Radius");
             WardRadiusPrefabs = config("Ward", "WardRadiusPrefabs", "Wood, 20", "Ward Radius Prefabs");
             WardFuelPrefabs = config("Ward", "WardFuelPrefabs", "Stone, 100", "Ward Fuel Prefabs");
@@ -99,7 +99,7 @@ namespace LegacyWard
                 if (!piece.GetComponent<WackyWard_Component>()) return true;
                 if (!WackyWard_Component.CanBuild(Player.m_localPlayer.m_placementGhost.transform.position))
                 {
-                    Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Другой вард рядом");
+                    Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Another ward nearby");
                     return false;
                 }
 
