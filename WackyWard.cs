@@ -793,6 +793,14 @@ namespace LegacyWard
             }
         }
 
+        [HarmonyPatch(typeof(CraftingStation), nameof(CraftingStation.Interact))]
+        static class CraftingStation_Interact_Patch
+        {
+            static bool Prefix(ItemDrop __instance)
+            {
+                return WackyWard_Component.AllowAction(__instance.transform.position);
+            }
+        }
 
         [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.Interact))]
         static class ItemDrop_Interact_Patch
