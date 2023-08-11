@@ -723,7 +723,7 @@ namespace LegacyWard
         {
             private static void Prefix(Container __instance)
             {
-                if (__instance.m_rootObjectOverride?.GetComponent<WackyWard_Component>() || WackyWard_Component.TryFindWard(__instance.transform.position))
+                if (WackyWard_Component.TryFindWard(__instance.transform.position, false))
                 {
                     SKIP_ANY_CHECKS = true;
                 }
@@ -737,7 +737,7 @@ namespace LegacyWard
         {
             private static void Prefix(Container __instance)
             {
-                if (__instance.m_rootObjectOverride?.GetComponent<WackyWard_Component>())
+                if (WackyWard_Component.TryFindWard(__instance.transform.position, false))
                 {
                     SKIP_ANY_CHECKS = true;
                 }
@@ -753,7 +753,7 @@ namespace LegacyWard
         {
             private static void Prefix(Container __instance)
             {
-                if (WackyWard_Component.TryFindWard(__instance.transform.position))
+                if (WackyWard_Component.TryFindWard(__instance.transform.position, false))
                 {
                     SKIP_ANY_CHECKS = true;
                 }
@@ -767,7 +767,7 @@ namespace LegacyWard
         {
             private static void Prefix(Container __instance)
             {
-                if (WackyWard_Component.TryFindWard(__instance.transform.position))
+                if (WackyWard_Component.TryFindWard(__instance.transform.position, false))
                 {
                     SKIP_ANY_CHECKS = true;
                 }
@@ -793,8 +793,9 @@ namespace LegacyWard
             }
         }
 
-        [HarmonyPatch(typeof(CraftingStation), nameof(CraftingStation.Interact))]
-        static class CraftingStation_Interact_Patch
+
+        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.Interact))]
+        static class ItemDrop_Interact_Patch
         {
             static bool Prefix(ItemDrop __instance)
             {
@@ -802,8 +803,8 @@ namespace LegacyWard
             }
         }
 
-        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.Interact))]
-        static class ItemDrop_Interact_Patch
+        [HarmonyPatch(typeof(CraftingStation), nameof(CraftingStation.Interact))]
+        static class CraftingStation_Interact_Patch
         {
             static bool Prefix(ItemDrop __instance)
             {
