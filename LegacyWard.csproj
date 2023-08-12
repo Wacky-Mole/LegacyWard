@@ -79,6 +79,10 @@
     <Reference Include="fastJSON">
       <HintPath>.\fastJSON.dll</HintPath>
     </Reference>
+    <Reference Include="KeyManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libs\KeyManager.dll</HintPath>
+    </Reference>
     <Reference Include="ServerSync">
       <HintPath>Libs\ServerSync.dll</HintPath>
     </Reference>
@@ -158,6 +162,9 @@
     <Content Include="assets\DropAssetBundleInThisFolder.txt" />
     <Content Include="environment.props" />
     <Content Include="ILRepack.targets" />
+    <Content Include="Libs\KeyManager.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Libs\PieceManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -189,11 +196,11 @@
     <Target Name="AfterBuild">
     </Target>
     -->
-  <UsingTask AssemblyFile="KeyManager.dll" TaskName="KeyManager.Seal" Condition="'$(AfterTargets)' == 'KeyManager'" />
-  <Target Name="KeyManager" AfterTargets="ILRepack" Condition="'$(AfterTargets)' == 'KeyManager'">
-    <Seal DLL="$(TargetPath)" />
-  </Target>
-  <Target Name="GetAssemblyVersion" AfterTargets="$(AfterTargets)">
+	<UsingTask AssemblyFile="Libs\KeyManager.dll" TaskName="KeyManager.Seal"/>
+	<Target Name="KeyManager" AfterTargets="ILRepack">
+		<Seal DLL="$(TargetPath)"/>
+	</Target>
+  <Target Name="GetAssemblyVersion" AfterTargets="KeyManager">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>
@@ -279,5 +286,5 @@ System.IO.File.WriteAllText(ManifestFile, content);
     <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)" />
     <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true" />
     <RemoveDir Directories="$(PackageDir)" />
-  </Target>
+  </Target> 
 </Project>

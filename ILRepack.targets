@@ -6,10 +6,12 @@
             <InputAssemblies Include="$(OutputPath)\ServerSync.dll" />
             <InputAssemblies Include="$(OutputPath)\YamlDotNet.dll" />
 			<InputAssemblies Include="$(OutputPath)\fastJSON.dll" />
+			<InputAssemblies Include="$(OutputPath)\KeyManager.dll" />
             <!-- Only use the line below if you choose to use the DLL and not the classes. If you choose the DLL, be sure to reference and 
              tell it to copy to output directory-->
             <!-- <InputAssemblies Include="$(OutputPath)\PieceManager.dll" /> -->
         </ItemGroup>
-        <ILRepack Parallel="true" DebugInfo="true" Internalize="true" InputAssemblies="@(InputAssemblies)" OutputFile="$(TargetPath)" TargetKind="SameAsPrimaryAssembly" LibraryPath="$(OutputPath)" />
+		<ILRepack Parallel="true" DebugInfo="true" Internalize="true" InputAssemblies="@(InputAssemblies)" OutputFile="$(TargetPath)"
+                  TargetKind="SameAsPrimaryAssembly" LibraryPath="$(OutputPath)" RepackDropAttribute="RepackDropAttribute"/>
     </Target>
 </Project>

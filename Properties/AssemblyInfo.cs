@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle(LegacyWard.WackyWard.GUID)]
+[assembly: AssemblyTitle(LegacyWard.LegacyWard.ModGUID)]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(LegacyWard.WackyWard.Author)]
-[assembly: AssemblyProduct(LegacyWard.WackyWard.GUID)]
+[assembly: AssemblyCompany(LegacyWard.LegacyWard.Author)]
+[assembly: AssemblyProduct(LegacyWard.LegacyWard.ModGUID)]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(LegacyWard.WackyWard.VERSION)]
-[assembly: AssemblyFileVersion(LegacyWard.WackyWard.VERSION)]
+[assembly: AssemblyVersion(LegacyWard.LegacyWard.VERSION)]
+[assembly: AssemblyFileVersion(LegacyWard.LegacyWard.VERSION)]

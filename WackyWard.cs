@@ -9,7 +9,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using fastJSON;
 using HarmonyLib;
-//using KeyManager;
+using KeyManager;
 using ServerSync;
 using TMPro;
 using UnityEngine;
@@ -18,13 +18,15 @@ using UnityEngine.UI;
 
 namespace LegacyWard
 {
-    [BepInPlugin(GUID, NAME, VERSION)]
-    public class WackyWard : BaseUnityPlugin
+    [BepInPlugin(ModGUID, ModName, VERSION)]
+    [KeyManager.VerifyKey(Author +"/" + ModName, LicenseMode.DedicatedServer)]
+    public class LegacyWard : BaseUnityPlugin
     {
-        internal const string GUID = "WackyMole.LegacyWard";
-        internal const string NAME = "WackyMole.LegacyWard";
+        //internal const string GUID = "LegacyWard";
+        internal const string ModName = "LegacyWard";
         internal const string VERSION = "1.0.0";
         internal const string Author = "WackyMole";
+        internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
         private static AssetBundle asset_vfx;
         private static GameObject Ward_Prefab;
@@ -39,7 +41,7 @@ namespace LegacyWard
         private static ConfigEntry<string> WardFuelPrefabs;
         private static ConfigEntry<int> WardMaxFuel;
         private static bool isServer => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
-        private readonly ConfigSync configSync = new(GUID) { DisplayName = NAME };
+        private readonly ConfigSync configSync = new(ModGUID) { DisplayName = ModName };
 
         private static bool _canPlaceWard;
 
@@ -60,6 +62,7 @@ namespace LegacyWard
         private void Awake()
         {
             _thistype = this;
+            configSync.ModRequired = true;
             asset = GetAssetBundle("wackyward");
             asset_vfx = GetAssetBundle("wackywardvfx");
             WardMaxFuel = config("Ward", "WardMaxFuel", 60 * 60 * 24 * 7*3, "Ward Max Fuel - 3 Weeks or 21 days");
@@ -88,7 +91,7 @@ namespace LegacyWard
             FlashShield_Deactivate = asset_vfx.LoadAsset<GameObject>("WackyWard_Deactivate");
             if (isServer) ServerSideInit();
 
-            new Harmony(GUID).PatchAll();
+            new Harmony(ModGUID).PatchAll();
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.PlacePiece), typeof(Piece))]
@@ -211,6 +214,7 @@ namespace LegacyWard
 
             public static bool CanBuild(Vector3 pos)
             {
+               // KeyManager.CheckAllowed() == State.Verified;
                 foreach (WackyWard_Component instance in _instances)
                 {
                     if (instance._piece.IsCreator()) continue;
@@ -616,7 +620,7 @@ namespace LegacyWard
         private static WardManager _wardManager;
         private static ConfigEntry<int> MaxAmountOfWards;
         private static ConfigEntry<int> MaxAmountOfWards_VIP;
-        private static WackyWard _thistype;
+        private static LegacyWard _thistype;
         private static FileSystemWatcher fsw;
 
         private void ServerSideInit()
