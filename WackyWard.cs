@@ -20,7 +20,7 @@ namespace LegacyWard
 {
     [BepInPlugin(ModGUID, ModName, VERSION)]
     [KeyManager.VerifyKey(Author +"/" + ModName, LicenseMode.DedicatedServer)]
-    public class LegacyWard : BaseUnityPlugin
+    public class WackyWard : BaseUnityPlugin
     {
         //internal const string GUID = "LegacyWard";
         internal const string ModName = "LegacyWard";
@@ -61,6 +61,7 @@ namespace LegacyWard
 
         private void Awake()
         {
+            Logger.LogWarning("hello 0 ");
             _thistype = this;
             configSync.ModRequired = true;
             asset = GetAssetBundle("wackyward");
@@ -72,6 +73,7 @@ namespace LegacyWard
             WardRecipe = config("Ward", "WardRecipe", "SwordCheat,1", "Ward Recipe");
             WardRecipe.SettingChanged += ResetRecipe;
 
+            Logger.LogWarning("hello 1 ");
             JSON.Parameters = new JSONParameters
             {
                 UseExtensions = false,
@@ -91,6 +93,7 @@ namespace LegacyWard
             FlashShield_Deactivate = asset_vfx.LoadAsset<GameObject>("WackyWard_Deactivate");
             if (isServer) ServerSideInit();
 
+            Logger.LogWarning("hello 2 ");
             new Harmony(ModGUID).PatchAll();
         }
 
@@ -620,7 +623,7 @@ namespace LegacyWard
         private static WardManager _wardManager;
         private static ConfigEntry<int> MaxAmountOfWards;
         private static ConfigEntry<int> MaxAmountOfWards_VIP;
-        private static LegacyWard _thistype;
+        private static WackyWard _thistype;
         private static FileSystemWatcher fsw;
 
         private void ServerSideInit()

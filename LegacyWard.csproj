@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CefSharpBuildAction>NoAction</CefSharpBuildAction>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -143,10 +144,10 @@
     <None Include="obj\Debug\LegacyWard.csproj.AssemblyReference.cache" />
     <None Include="obj\Release\LegacyWard.csproj.AssemblyReference.cache" />
     <None Include="tsconfig.json" />
-    <EmbeddedResource Include="wackyward">
+    <EmbeddedResource Include="assets\wackyward">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="wackywardvfx">
+    <EmbeddedResource Include="assets\wackywardvfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
@@ -159,10 +160,9 @@
     <Content Include=".idea\.idea.WackyWard.dir\.idea\misc.xml" />
     <Content Include=".idea\.idea.WackyWard.dir\.idea\projectSettingsUpdater.xml" />
     <Content Include=".idea\.idea.WackyWard.dir\.idea\workspace.xml" />
-    <Content Include="assets\DropAssetBundleInThisFolder.txt" />
     <Content Include="environment.props" />
     <Content Include="ILRepack.targets" />
-    <Content Include="Libs\KeyManager.dll">
+    <Content Include="KeyManager.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Libs\PieceManager.dll">
@@ -189,17 +189,17 @@
     <Folder Include="obj\Debug\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!--To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">
     </Target>
     <Target Name="AfterBuild">
     </Target>
-    -->
-	<UsingTask AssemblyFile="Libs\KeyManager.dll" TaskName="KeyManager.Seal"/>
-	<Target Name="KeyManager" AfterTargets="ILRepack">
-		<Seal DLL="$(TargetPath)"/>
-	</Target>
+-->
+  <UsingTask AssemblyFile="KeyManager.dll" TaskName="KeyManager.Seal" />
+  <Target Name="KeyManager" AfterTargets="ILRepack">
+    <Seal DLL="$(TargetPath)" />
+  </Target>
   <Target Name="GetAssemblyVersion" AfterTargets="KeyManager">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
@@ -286,5 +286,5 @@ System.IO.File.WriteAllText(ManifestFile, content);
     <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)" />
     <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true" />
     <RemoveDir Directories="$(PackageDir)" />
-  </Target> 
+  </Target>
 </Project>
