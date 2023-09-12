@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using BepInEx;
 using BepInEx.Configuration;
@@ -29,6 +30,7 @@ namespace LegacyWard
         private static AssetBundle asset;
         private static AssetBundle asset_vfx;
         private static GameObject Ward_Prefab;
+        private static GameObject Ward_Prefab_par;
         private static GameObject FlashShield;
         private static GameObject FlashShield_Permit;
         private static GameObject FlashShield_Fuel;
@@ -41,6 +43,7 @@ namespace LegacyWard
         private static ConfigEntry<int> WardMaxFuel;
         private static bool isServer => SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
         private readonly ConfigSync configSync = new(ModGUID) { DisplayName = ModName };
+        private readonly Harmony _harmony = new(ModGUID);
 
         private static bool _canPlaceWard;
 
@@ -83,6 +86,12 @@ namespace LegacyWard
 
             Ward_Prefab = asset.LoadAsset<GameObject>("WackyWard");
             Ward_Prefab.AddComponent<WackyWard_Component>();
+            /*
+            Ward_Prefab_par = asset.LoadAsset<GameObject>("WackyWard");
+            Ward_Prefab_par.AddComponent<WackyWard_Component>();
+            Ward_Prefab_par.name = "WackyWardEdge";
+            Ward_Prefab_par.GetComponent<Piece>().m_name = "Legacy Ward Edge";
+            */
             FlashShield = asset_vfx.LoadAsset<GameObject>("WackyWard_Explosion");
             FlashShield_Permit = asset_vfx.LoadAsset<GameObject>("WackyWard_Permit");
             FlashShield_Fuel = asset_vfx.LoadAsset<GameObject>("WackyWard_Fuel");
@@ -90,7 +99,7 @@ namespace LegacyWard
             FlashShield_Deactivate = asset_vfx.LoadAsset<GameObject>("WackyWard_Deactivate");
             if (isServer) ServerSideInit();
 
-            new Harmony(ModGUID).PatchAll();
+            _harmony.PatchAll();
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.PlacePiece), typeof(Piece))]
@@ -116,6 +125,47 @@ namespace LegacyWard
             }
         }
 
+
+        [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.Start))]
+        public static class FejdStartupPatch
+        {
+            static void Postfix(FejdStartup __instance)
+            {
+                if (isServer)
+                    return;
+
+
+                if (ZNet.m_onlineBackend == OnlineBackendType.PlayFab)
+                {
+
+                    _thistype._harmony.Patch(AccessTools.DeclaredMethod(typeof(ZPlayFabMatchmaking), nameof(ZPlayFabMatchmaking.CreateLobby)),
+                         postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(FejdStartupPatch),
+                             nameof(gamepassServer))));
+
+                }
+                else if (ZNet.m_onlineBackend == OnlineBackendType.Steamworks)
+                {
+                    _thistype._harmony.Patch(AccessTools.DeclaredMethod(typeof(ZSteamMatchmaking), nameof(ZSteamMatchmaking.RegisterServer)),
+                        postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(FejdStartupPatch),
+                            nameof(steamServer))));
+                }
+
+            }
+
+            private static void steamServer()
+            {
+                _thistype.Logger.LogError("Steam Lobby is active");
+                Application.Quit();
+
+            }
+
+            private static void gamepassServer()
+            {
+                _thistype.Logger.LogError("Zplay Lobby is active");
+                Application.Quit();
+            }
+
+        }
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
         private static class ZNetScene_Awake_Patch
         {
@@ -135,6 +185,7 @@ namespace LegacyWard
 
 
                 if (!hammer.Contains(Ward_Prefab)) hammer.Add(Ward_Prefab);
+             //   if (!hammer.Contains(Ward_Prefab_par)) hammer.Add(Ward_Prefab_par);
 
                 __instance.m_prefabs.Add(FlashShield);
                 __instance.m_namedPrefabs.Add(FlashShield.name.GetStableHashCode(), FlashShield);
@@ -148,6 +199,8 @@ namespace LegacyWard
                 __instance.m_namedPrefabs.Add(FlashShield_Deactivate.name.GetStableHashCode(), FlashShield_Deactivate);
                 __instance.m_prefabs.Add(Ward_Prefab);
                 __instance.m_namedPrefabs.Add(Ward_Prefab.name.GetStableHashCode(), Ward_Prefab);
+            //    __instance.m_prefabs.Add(Ward_Prefab_par);
+              //  __instance.m_namedPrefabs.Add(Ward_Prefab.name.GetStableHashCode(), Ward_Prefab_par);
             }
 
             private static void WardPlaced(long sender)
@@ -891,10 +944,10 @@ namespace LegacyWard
             }
         }
 
-        [HarmonyPatch(typeof(Menu), nameof(Menu.IsVisible))]
-        private static class Menu_IsVisible_Patch
+        [HarmonyPatch(typeof(StoreGui), nameof(StoreGui.IsVisible))]
+        private static class Store_IsVisible_Patch
         {
-            private static void Postfix(Menu __instance, ref bool __result)
+            private static void Postfix(StoreGui __instance, ref bool __result)
             {
                 __result |= showGUI;
             }
@@ -998,6 +1051,7 @@ namespace LegacyWard
                 }
 
                 Ward_Prefab.GetComponent<Piece>().m_resources = reqs.ToArray();
+               // Ward_Prefab_par.GetComponent<Piece>().m_resources = reqs.ToArray();
             }
             catch
             {
@@ -1009,7 +1063,17 @@ namespace LegacyWard
                         m_resItem = ObjectDB.instance.GetItemPrefab("SwordCheat").GetComponent<ItemDrop>(),
                         m_recover = false
                     }
-                };
+                }; 
+                /*
+                Ward_Prefab_par.GetComponent<Piece>().m_resources = new[]
+                {
+                    new Piece.Requirement()
+                    {
+                        m_amount = 1,
+                        m_resItem = ObjectDB.instance.GetItemPrefab("SwordCheat").GetComponent<ItemDrop>(),
+                        m_recover = false
+                    }
+                }; */
             }
         }
     }
