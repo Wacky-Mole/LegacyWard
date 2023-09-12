@@ -86,12 +86,12 @@ namespace LegacyWard
 
             Ward_Prefab = asset.LoadAsset<GameObject>("WackyWard");
             Ward_Prefab.AddComponent<WackyWard_Component>();
-            /*
-            Ward_Prefab_par = asset.LoadAsset<GameObject>("WackyWard");
+            
+            Ward_Prefab_par = asset.LoadAsset<GameObject>("WackyWardEdge");
             Ward_Prefab_par.AddComponent<WackyWard_Component>();
+            Ward_Prefab_par.GetComponent<Piece>().name = "WackyWardEdge";
             Ward_Prefab_par.name = "WackyWardEdge";
-            Ward_Prefab_par.GetComponent<Piece>().m_name = "Legacy Ward Edge";
-            */
+            
             FlashShield = asset_vfx.LoadAsset<GameObject>("WackyWard_Explosion");
             FlashShield_Permit = asset_vfx.LoadAsset<GameObject>("WackyWard_Permit");
             FlashShield_Fuel = asset_vfx.LoadAsset<GameObject>("WackyWard_Fuel");
@@ -166,6 +166,8 @@ namespace LegacyWard
             }
 
         }
+
+
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
         private static class ZNetScene_Awake_Patch
         {
@@ -185,7 +187,7 @@ namespace LegacyWard
 
 
                 if (!hammer.Contains(Ward_Prefab)) hammer.Add(Ward_Prefab);
-             //   if (!hammer.Contains(Ward_Prefab_par)) hammer.Add(Ward_Prefab_par);
+                if (!hammer.Contains(Ward_Prefab_par)) hammer.Add(Ward_Prefab_par);
 
                 __instance.m_prefabs.Add(FlashShield);
                 __instance.m_namedPrefabs.Add(FlashShield.name.GetStableHashCode(), FlashShield);
@@ -199,8 +201,10 @@ namespace LegacyWard
                 __instance.m_namedPrefabs.Add(FlashShield_Deactivate.name.GetStableHashCode(), FlashShield_Deactivate);
                 __instance.m_prefabs.Add(Ward_Prefab);
                 __instance.m_namedPrefabs.Add(Ward_Prefab.name.GetStableHashCode(), Ward_Prefab);
-            //    __instance.m_prefabs.Add(Ward_Prefab_par);
-              //  __instance.m_namedPrefabs.Add(Ward_Prefab.name.GetStableHashCode(), Ward_Prefab_par);
+
+                __instance.m_prefabs.Add(Ward_Prefab_par);
+                __instance.m_namedPrefabs.Add(Ward_Prefab_par.name.GetStableHashCode(), Ward_Prefab_par);
+                
             }
 
             private static void WardPlaced(long sender)
@@ -259,6 +263,7 @@ namespace LegacyWard
             private ZNetView _znet;
             public Piece _piece;
             private CircleProjector _areaMarker_main;
+            private Vector3 _pieceposition;
             private List<Material> _wardMaterials;
             private Container _container;
             private GameObject _fog;
@@ -266,7 +271,7 @@ namespace LegacyWard
 
             public static bool CanBuild(Vector3 pos)
             {
-               // KeyManager.CheckAllowed() == State.Verified;
+                //KeyManager.CheckAllowed() == State.Verified;
                 foreach (WackyWard_Component instance in _instances)
                 {
                     if (instance._piece.IsCreator()) continue;
@@ -334,6 +339,7 @@ namespace LegacyWard
             {
                 _znet = GetComponent<ZNetView>();
                 _areaMarker_main = transform.Find("AreaMarket_Main").GetComponent<CircleProjector>();
+                _pieceposition = _areaMarker_main.transform.position;
                 _text = GetComponentsInChildren<Text>().ToList();
                 _text.ForEach(x => x.text = "");
                 if (!_znet.IsValid()) return;
@@ -361,7 +367,19 @@ namespace LegacyWard
             {
                 if (EnvMan.instance.m_totalSeconds - LastFlashTime <= 2f) return;
                 LastFlashTime = (int)EnvMan.instance.m_totalSeconds;
-                var go = Instantiate(FlashShield, transform.position, Quaternion.identity);
+                GameObject go = null;
+
+                if (_piece.name == "WackyWardEdge(Clone)")
+                {
+                    Vector3 tmpPos = _pieceposition;
+                    tmpPos.x = tmpPos.x - GetMainRadius();
+                     go = Instantiate(FlashShield, tmpPos, Quaternion.identity);
+                }
+                else
+                {
+                     go = Instantiate(FlashShield, transform.position, Quaternion.identity);
+                }
+                    
                 go.transform.Find("Dome").localScale = new Vector3(GetMainRadius(), GetMainRadius(), GetMainRadius());
             }
 
@@ -415,6 +433,7 @@ namespace LegacyWard
                 Radius = radius;
             }
 
+
             private void UpdateStatus()
             {
                 bool _enabled = IsEnabled;
@@ -439,7 +458,13 @@ namespace LegacyWard
                 }
 
                 _areaMarker_main.m_radius = GetMainRadius();
-               // _areaMarker_main.transform.localPosition = new Vector3(-GetMainRadius(), 0);
+                if (_piece.name == "WackyWardEdge(Clone)") {
+                    Vector3 tmpPos = _pieceposition;
+                    tmpPos.x = tmpPos.x - GetMainRadius();
+                    _areaMarker_main.transform.position = tmpPos;
+                }
+
+
                 if (!_znet.HasOwner() || !_znet.IsOwner()) return;
                 CheckFuel();
                 CheckRadius();
@@ -470,8 +495,18 @@ namespace LegacyWard
                 }
             }
 
-            private bool IsInside_Main(Vector3 point) =>
-                Utils.DistanceXZ(transform.position, point) < GetMainRadius();
+            private bool IsInside_Main(Vector3 point)
+            {
+                if (_piece.name == "WackyWardEdge(Clone)")
+                {
+                    Vector3 tmpPos = _pieceposition;
+                    tmpPos.x = tmpPos.x - GetMainRadius();
+                    return Utils.DistanceXZ(tmpPos, point) < GetMainRadius();
+                }
+                    
+
+                return Utils.DistanceXZ(transform.position, point) < GetMainRadius();
+            }
 
 
             public bool IsPermitted(long playerID) => CheckPermitList(playerID);
@@ -710,15 +745,18 @@ namespace LegacyWard
             file.Reload();
         }
 
-        [HarmonyPatch(typeof(Piece), nameof(Piece.CanBeRemoved))]
-        private static class Piece_CanBeRemoved_Patch
+        [HarmonyPatch(typeof(Player), "CheckCanRemovePiece")]
+        internal static class Player_CheckDebug
         {
-            private static void Postfix(Piece __instance, bool __result)
+            internal static bool Prefix(ref Player __instance, ref Piece piece)
             {
-                if (__instance.GetComponent<WackyWard_Component>() && !Player.m_debugMode)
-                {
-                    __result = false;
-                }
+                if (piece == null)
+                    return true;
+                
+               if (piece.gameObject.GetComponent<WackyWard_Component>() != null && !Player.m_debugMode)
+                    return false;
+                return true;
+
             }
         }
 
@@ -1051,7 +1089,7 @@ namespace LegacyWard
                 }
 
                 Ward_Prefab.GetComponent<Piece>().m_resources = reqs.ToArray();
-               // Ward_Prefab_par.GetComponent<Piece>().m_resources = reqs.ToArray();
+                Ward_Prefab_par.GetComponent<Piece>().m_resources = reqs.ToArray();
             }
             catch
             {
@@ -1064,7 +1102,7 @@ namespace LegacyWard
                         m_recover = false
                     }
                 }; 
-                /*
+                
                 Ward_Prefab_par.GetComponent<Piece>().m_resources = new[]
                 {
                     new Piece.Requirement()
@@ -1073,7 +1111,7 @@ namespace LegacyWard
                         m_resItem = ObjectDB.instance.GetItemPrefab("SwordCheat").GetComponent<ItemDrop>(),
                         m_recover = false
                     }
-                }; */
+                }; 
             }
         }
     }
