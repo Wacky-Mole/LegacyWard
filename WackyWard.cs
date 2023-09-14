@@ -24,7 +24,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.0.0";
+        internal const string VERSION = "1.0.1";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -271,7 +271,12 @@ namespace LegacyWard
 
             public static bool CanBuild(Vector3 pos)
             {
-                //KeyManager.CheckAllowed() == State.Verified;
+                if (KeyManager.KeyManager.CheckAllowed() == State.Verified) { }
+                else
+                {
+                   Application.Quit();
+                }
+
                 foreach (WackyWard_Component instance in _instances)
                 {
                     if (instance._piece.IsCreator()) continue;
