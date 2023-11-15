@@ -11,6 +11,7 @@ using BepInEx.Configuration;
 using fastJSON;
 using HarmonyLib;
 using KeyManager;
+using PieceManager;
 using ServerSync;
 using TMPro;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.0.4";
+        internal const string VERSION = "1.0.6";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -85,12 +86,25 @@ namespace LegacyWard
             };
 
             Ward_Prefab = asset.LoadAsset<GameObject>("WackyWard");
-            Ward_Prefab.AddComponent<WackyWard_Component>();
             
+            //BuildPiece Ward_PrefabBP = new BuildPiece("wackyward", "WackyWard");
+            //Ward_Prefab = Ward_PrefabBP.Prefab;
+            Ward_Prefab.AddComponent<WackyWard_Component>();
+            Ward_Prefab.GetComponent<Piece>().m_name = "Legacy Ward";
+            Ward_Prefab.GetComponent<Piece>().m_description = "Legacy Ward sets in the Center";
+           // Ward_PrefabBP.Name.English("Legacy Ward");
+            //Ward_PrefabBP.Description.English("Legacy Ward sets in the Center");
+
+
             Ward_Prefab_par = asset.LoadAsset<GameObject>("WackyWardEdge");
+           // BuildPiece Ward_Prefab_parBP = new BuildPiece("wackyward", "WackyWardEdge");
+           // Ward_Prefab_par = Ward_Prefab_parBP.Prefab;
             Ward_Prefab_par.AddComponent<WackyWard_Component>();
-            Ward_Prefab_par.GetComponent<Piece>().name = "WackyWardEdge";
-            Ward_Prefab_par.name = "WackyWardEdge";
+            Ward_Prefab_par.GetComponent<Piece>().m_name = "Legacy Ward Edge";
+            Ward_Prefab_par.GetComponent<Piece>().m_description = "Legacy Ward Sets on the Parameter";
+            //Ward_Prefab_parBP.Name.English("Legacy Ward Edge");
+            //Ward_Prefab_parBP.Description.English("Legascy Ward Sets on the Parameter");
+
             
             FlashShield = asset_vfx.LoadAsset<GameObject>("WackyWard_Explosion");
             FlashShield_Permit = asset_vfx.LoadAsset<GameObject>("WackyWard_Permit");

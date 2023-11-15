@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LegacyWard</RootNamespace>
     <AssemblyName>LegacyWard</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
@@ -128,8 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LocalizationManager.cs" />
-    <Compile Include="obj\Debug\.NETFramework,Version=v4.6.2.AssemblyAttributes.cs" />
-    <Compile Include="obj\Release\.NETFramework,Version=v4.6.2.AssemblyAttributes.cs" />
     <Compile Include="PieceManager\MaterialReplacer.cs" />
     <Compile Include="PieceManager\PieceManager.cs" />
     <Compile Include="PieceManager\SnapPointMaker.cs" />
