@@ -53,7 +53,8 @@ This mod deactives normal wards and WIL wards when active. (pending future api)
 
 ## Disclaimer
 
-LegacyWard is a third-party modification and is not officially endorsed or supported by the developers of Valheim. Use the mod at your own risk. Always back up your game saves before installing mods.
+LegacyWard is a third-party modification and is not officialz`ly endorsed or supported by the developers of Valheim. Use the mod at your own risk. Always back up your game saves before installing mods.
 
 Happy adventuring with LegacyWard!
-  [![KeyManager Disclaimer](https://noobtrap.eu/images/keymanager_dis.claimer_serverpng)](https://key.sayless.eu/faq.php)
+
+[![KeyManager Disclaimer](https://noobtrap.eu/images/keymanager_disclaimer_server.png)](https://key.sayless.eu/faq.php)
