@@ -1,122 +1,59 @@
-## Follow this video to learn how to use this template effectively: https://www.youtube.com/watch?v=ws7Lq8tRWlI&t
-
-# Piece Manager
-
-Can be used to easily add new building pieces to Valheim. Will automatically add config options to your mod and sync the
-configuration from a server, if the mod is installed on the server as well.
-
-## How to add pieces
-
-Copy the asset bundle into your project and make sure to set it as an EmbeddedResource in the properties of the asset
-bundle. Default path for the asset bundle is an `assets` directory, but you can override this. This way, you don't have
-to distribute your assets with your mod. They will be embedded into your mods DLL.
-
-### Merging the DLLs into your mod
-
-Download the PieceManager.dll and the ServerSync.dll from the release section to the right. Including the DLLs is best
-done via ILRepack (https://github.com/ravibpatel/ILRepack.Lib.MSBuild.Task). You can load this package (
-ILRepack.Lib.MSBuild.Task) from NuGet.
-
-If you have installed ILRepack via NuGet, simply create a file named `ILRepack.targets` in your project and copy the
-following content into the file
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="ILRepacker" AfterTargets="Build">
-        <ItemGroup>
-            <InputAssemblies Include="$(TargetPath)"/>
-            <InputAssemblies Include="$(OutputPath)\PieceManager.dll"/>
-            <InputAssemblies Include="$(OutputPath)\ServerSync.dll"/>
-        </ItemGroup>
-        <ILRepack Parallel="true" DebugInfo="true" Internalize="true" InputAssemblies="@(InputAssemblies)"
-                  OutputFile="$(TargetPath)" TargetKind="SameAsPrimaryAssembly" LibraryPath="$(OutputPath)"/>
-    </Target>
-</Project>
-```
-
-Make sure to set the PieceManager.dll and the ServerSync.dll in your project to "Copy to output directory" in the
-properties of the DLLs and to add a reference to it. After that, simply add `using PieceManager;` to your mod and use
-the `BuildPiece` class, to add your items.
-
-## Example project
-
-This adds three different pieces from two different asset bundles. The `funward` asset bundle is in a directory
-called `FunWard`, while the `bamboo` asset bundle is in a directory called `assets`.
-
-```csharp
-using System.IO;
-using BepInEx;
-using HarmonyLib;
-using PieceManager;
-
-namespace PieceManagerExampleMod
-{
-    [BepInPlugin(ModGUID, ModName, ModVersion)]
-    public class PieceManagerExampleMod : BaseUnityPlugin
-    {
-        private const string ModName = "PieceManagerExampleMod";
-        private const string ModVersion = "1.0.0";
-        internal const string Author = "azumatt";
-        private const string ModGUID = Author + "." + ModName;
-        private static string ConfigFileName = ModGUID + ".cfg";
-        private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
-
-        private void Awake()
-        {
-            // Globally turn off configuration options for your pieces, omit if you don't want to do this.
-            BuildPiece.ConfigurationEnabled = false;
-            
-            // Format: new("AssetBundleName", "PrefabName", "FolderName");
-            BuildPiece examplePiece1 = new("funward", "funward", "FunWard");
-
-            examplePiece1.Name.English("Fun Ward"); // Localize the name and description for the building piece for a language.
-            examplePiece1.Description.English("Ward For testing the Piece Manager");
-            examplePiece1.RequiredItems.Add("FineWood", 20, false); // Set the required items to build. Format: ("PrefabName", Amount, Recoverable)
-            examplePiece1.RequiredItems.Add("SurtlingCore", 20, false);
-            examplePiece1.Category.Add(BuildPieceCategory.Misc);
-            examplePiece1.Crafting.Set(CraftingTable.ArtisanTable); // Set a crafting station requirement for the piece.
-            examplePiece1.Extension.Set(CraftingTable.Forge, 2); // Makes this piece a station extension, can change the max station distance by changing the second value. Use strings for custom tables.
-            //examplePiece1.Crafting.Set("CUSTOMTABLE"); // If you have a custom table you're adding to the game. Just set it like this.
-            
-            //examplePiece1.SpecialProperties.NoConfig = true;  // Do not generate a config for this piece, omit this line of code if you want to generate a config.
-            examplePiece1.SpecialProperties = new SpecialProperties() { AdminOnly = true, NoConfig = true}; // You can declare multiple properties in one line           
+# LegacyWard Mod 
+By WackyMole
 
 
-            BuildPiece examplePiece2 = new("bamboo", "Bamboo_Wall"); // Note: If you wish to use the default "assets" folder for your assets, you can omit it!
-            examplePiece2.Name.English("Bamboo Wall");
-            examplePiece2.Description.English("A wall made of bamboo!");
-            examplePiece2.RequiredItems.Add("BambooLog", 20, false);
-            examplePiece2.Category.Add(BuildPieceCategory.Building);
-            examplePiece2.Crafting.Set("CUSTOMTABLE"); // If you have a custom table you're adding to the game. Just set it like this.
-            examplePiece2.SpecialProperties.AdminOnly = true;  // You can declare these one at a time as well!.
+![LegacyWithCircle](https://wackymole.com/hosts/legacywardwithred.png)
+## Overview
+
+Welcome to LegacyWard, a Valheim mod that introduces a unique protection system for player builds. LegacyWard offers a new gameplay experience by allowing players to explore the world without Admins fearing of their structures being damaged, while also providing a mechanism for claiming and personalizing these builds using a rare token.
+
+### Features
+
+- **Build Protection:** LegacyWard shields player structures from damage, creating a safe haven for your creations in the vast and dangerous world of Valheim.
+
+- **Exploration Emphasis:** With LegacyWard, admins can focus on builds and admin duties without the constant worry of returning to a dilapidated legacy structures.
+
+- **Claiming System:** A rare token is introduced as part of the mod, enabling players to claim a protected build as their own. This adds an element of rarity and strategy to the mod.
+
+- **Reverse Ward Concept:** LegacyWard operates as a reverse ward, safeguarding structures instead of keeping entities out. This innovative approach enhances the immersive nature of Valheim.
 
 
-            // If you want to add your item to the cultivator or another hammer with vanilla categories
-            // Format: (AssetBundle, "PrefabName", addToCustom, "Item that has a piecetable")
-            BuildPiece examplePiece3 = new(PiecePrefabManager.RegisterAssetBundle("bamboo"), "Bamboo_Sapling", true, "Cultivator");
-            examplePiece3.Name.English("Bamboo Sapling");
-            examplePiece3.Description.English("A young bamboo tree, called a sapling");
-            examplePiece3.RequiredItems.Add("BambooSeed", 20, false);
-            examplePiece3.SpecialProperties.NoConfig = true;
-            
-            // If you don't want to make an icon inside unity, but want the PieceManager to snag one for you, simply add .Snapshot() to your piece.
-            examplePiece3.Snapshot(); // Optionally, you can use the lightIntensity parameter to set the light intensity of the snapshot. Default is 1.3 or the cameraRotation parameter to set the rotation of the camera. Default is null.
+## Semi-Private Mod
 
-            // Need to add something to ZNetScene but not the hammer, cultivator or other? 
-            PiecePrefabManager.RegisterPrefab("bamboo", "Bamboo_Beam_Light");
-            
-            // Does your model need to swap materials with a vanilla material? Format: (GameObject, isJotunnMock)
-            MaterialReplacer.RegisterGameObjectForMatSwap(examplePiece3.Prefab, false);
-            
-            // Does your model use a shader from the game like Custom/Creature or Custom/Piece in unity? Need it to "just work"?
-            MaterialReplacer.RegisterGameObjectForShaderSwap(examplePiece3.Prefab, MaterialReplacer.ShaderType.UseUnityShader);
-            
-            // What if you want to use a custom shader from the game (like Custom/Piece that allows snow!!!) but your unity shader isn't set to Custom/Piece? Format: (GameObject, MaterialReplacer.ShaderType.)
-            //MaterialReplacer.RegisterGameObjectForShaderSwap(examplePiece3.Prefab, MaterialReplacer.ShaderType.PieceShader);
+LegacyWard is intended for semi-private use. It is primarily designed for my Server (whenever that happens) and the forthcoming Legends Rift. https://valheim.thunderstore.io/package/The_Legends_Rift/Legend_Rift/ 
 
-            // Detailed instructions on how to use the MaterialReplacer can be found on the current PieceManager Wiki. https://github.com/AzumattDev/PieceManager/wiki
-        }
-    }
-}
-```
+This mod is configured to work in single-player mode only. Cooperative play or dedicated servers will auto-abort when attempting to use LegacyWard.
+
+Feel free to download and enjoy LegacyWard on your local world.
+
+## Installation
+
+ **Copy to Valheim Directory:** Copy the mod files into the "BepInEx" folder within your Valheim game directory.
+
+ **Run Valheim:** Start Valheim to experience the LegacyWard mod in action.
+
+## Usage
+
+1. **Build Protection:** Once the mod is installed, admins have two structures they can build normal Legacy Ward which protects out from the middle of the ward or the Legacy Ward Edge, which protects from the parameter of the circle.
+
+2. **Claiming System:** To claim a protected build, obtain the rare token within the game. Use another mod's item/token or Wackydb to generate a item.  The player puts the token in the box and it become theres, the ward deactives allowing building and modifcations. The ward will reactive once the timer runs out.  Deactiving player wards and eventually WIL wards.  This process adds a strategic element to the mod and promotes rare item acquisition.
+
+3. **Explore Freely:** With LegacyWard, players venture into the unknown legacy structures. The players can interact with chests, doors and loot, but stops the players from building/deconstructing and using craftingstations. 
+
+
+![Legacy UI](https://wackymole.com/hosts/legacywardui.png)
+
+## Compatibility
+
+LegacyWard is designed to work with other mods that do not interfere with its core functionality. Ensure compatibility by checking mod compatibility lists or community forums.
+
+This mod deactives normal wards and WIL wards when active. (pending future api)
+
+
+
+## Disclaimer
+
+LegacyWard is a third-party modification and is not officially endorsed or supported by the developers of Valheim. Use the mod at your own risk. Always back up your game saves before installing mods.
+
+Happy adventuring with LegacyWard!
+  [![KeyManager Disclaimer](https://noobtrap.eu/images/keymanager_dis.claimer_serverpng)](https://key.sayless.eu/faq.php)
