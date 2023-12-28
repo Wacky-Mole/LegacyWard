@@ -22,7 +22,7 @@ Welcome to LegacyWard, a Valheim mod that introduces a unique protection system 
 
 LegacyWard is intended for semi-private use. It is primarily designed for my Server (whenever that happens) and the forthcoming Legends Rift. https://valheim.thunderstore.io/package/The_Legends_Rift/Legend_Rift/ 
 
-This mod is configured to work in single-player mode only. Cooperative play or dedicated servers will auto-abort when attempting to use LegacyWard.
+<FONT COLOR="#ff0000"> This mod is configured to work in single-player mode only. Cooperative play or dedicated servers will auto-abort when attempting to use LegacyWard.</FONT>
 
 Feel free to download and enjoy LegacyWard on your local world.
 
