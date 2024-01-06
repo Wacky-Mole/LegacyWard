@@ -25,7 +25,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.0.7";
+        internal const string VERSION = "1.0.8";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -187,12 +187,6 @@ namespace LegacyWard
         {
             private static void Postfix(ZNetScene __instance)
             {
-                if (KeyManager.KeyManager.CheckAllowed() == State.Verified)
-                { }
-                else
-                {
-                    Application.Quit();
-                }
 
                 if (isServer)
                 {
