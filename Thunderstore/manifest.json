@@ -1,6 +1,6 @@
 {
   "name": "LegacyWard",
-  "version_number": "1.0.8",
+  "version_number": "1.0.9",
   "website_url": "https://discord.gg/HZETGMfw4y",
   "description": "Protect the Legacy builds, but allow players to claim with rare token.",
   "dependencies": [

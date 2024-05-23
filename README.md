@@ -16,7 +16,7 @@ Welcome to LegacyWard, a Valheim mod that introduces a unique protection system 
 - **Claiming System:** A rare token is introduced as part of the mod, enabling players to claim a protected build as their own. This adds an element of rarity and strategy to the mod.
 
 - **Reverse Ward Concept:** LegacyWard operates as a reverse ward, safeguarding structures instead of keeping entities out. This innovative approach enhances the immersive nature of Valheim.
-
+****
 
 ## <span style="color:red"> Semi-Private Mod </span>
 
