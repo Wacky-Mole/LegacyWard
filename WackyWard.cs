@@ -17,6 +17,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using WardIsLove.API;
 
 namespace LegacyWard
 {
@@ -116,10 +117,10 @@ namespace LegacyWard
             _harmony.PatchAll();
         }
 
-        [HarmonyPatch(typeof(Player), nameof(Player.PlacePiece), typeof(Piece))]
-        static class PlacePiece_Patch
+        [HarmonyPatch(typeof(Player), nameof(Player.PlacePiece))]
+        static class PlacePiece_PatchLegacyWArd
         {
-            static bool Prefix(Piece piece)
+            private static bool Prefix(ref Player __instance, ref Piece piece, Vector3 pos, Quaternion rot, bool doAttack)
             {
                 if (!piece.GetComponent<WackyWard_Component>()) return true;
                 if (!WackyWard_Component.CanBuild(Player.m_localPlayer.m_placementGhost.transform.position))
@@ -512,6 +513,15 @@ namespace LegacyWard
                     {
                         ward.m_nview.InvokeRPC("ToggleEnabled", new object[] { ward.m_piece.GetCreator() });
                     }
+                    
+                    if (!API.IsLoaded())
+                    {
+                        //Debug.Log("WardIsLove API is not loaded.");
+                        return;
+                    }
+                    var wardAPI = new WardIsLove.API.API();
+                    wardAPI.DisableWardPlayerIsIn(_pieceposition, false);
+
                 }
             }
 

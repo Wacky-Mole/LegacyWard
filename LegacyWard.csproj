@@ -82,6 +82,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\KeyManager.dll</HintPath>
     </Reference>
+    <Reference Include="PieceManager">
+      <HintPath>Libs\PieceManager.dll</HintPath>
+    </Reference>
     <Reference Include="ServerSync">
       <HintPath>Libs\ServerSync.dll</HintPath>
     </Reference>
@@ -125,14 +128,15 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>$(GamePath)\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="WardIsLove">
+      <HintPath>Libs\WardIsLove.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LocalizationManager.cs" />
-    <Compile Include="PieceManager\MaterialReplacer.cs" />
-    <Compile Include="PieceManager\PieceManager.cs" />
-    <Compile Include="PieceManager\SnapPointMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WackyWard.cs" />
+    <Compile Include="wardAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -169,6 +173,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Libs\ServerSync.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Libs\WardIsLove.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="README.md" />
