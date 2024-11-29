@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.Remoting.Contexts;
 using System.Text;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using fastJSON;
 using HarmonyLib;
@@ -17,7 +18,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using WardIsLove.API;
+using WardIsLove;
 
 namespace LegacyWard
 {
@@ -513,14 +514,13 @@ namespace LegacyWard
                     {
                         ward.m_nview.InvokeRPC("ToggleEnabled", new object[] { ward.m_piece.GetCreator() });
                     }
-                    
-                    if (!API.IsLoaded())
+
+                    if (Chainloader.PluginInfos.ContainsKey("Azumatt.WardIsLove"))
                     {
-                        //Debug.Log("WardIsLove API is not loaded.");
-                        return;
+                        Debug.LogWarning("WardIsLove API is loaded.");
+                        var wardAPI = new WardIsLove.API.API();
+                        wardAPI.DisableWardPlayerIsIn(_pieceposition, false);
                     }
-                    var wardAPI = new WardIsLove.API.API();
-                    wardAPI.DisableWardPlayerIsIn(_pieceposition, false);
 
                 }
             }

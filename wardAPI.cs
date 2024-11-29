@@ -1,13 +1,12 @@
 ﻿using System;
 using UnityEngine;
-using WardIsLove.API;
+using WardIsLove;
 
-public class WardInteractionMod : MonoBehaviour
+public class WardIsLoveAPI : MonoBehaviour
 {
     private void OnEnable()
     {
-        // Subscribe to WardIsLove events
-        API.OnWardEntered += HandleWardEntered;
+        // Subscribe to WardIsLove events.OnWardEntered += HandleWardEntered;
         API.OnWardExited += HandleWardExited;
         API.OnBubbleOn += HandleBubbleOn;
         API.OnBubbleOff += HandleBubbleOff;
