@@ -27,7 +27,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.0.9";
+        internal const string VERSION = "1.1.0";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -517,7 +517,7 @@ namespace LegacyWard
 
                     if (Chainloader.PluginInfos.ContainsKey("Azumatt.WardIsLove"))
                     {
-                        Debug.LogWarning("WardIsLove API is loaded.");
+                       // Debug.LogWarning("WardIsLove API is loaded.");
                         var wardAPI = new WardIsLove.API.API();
                         wardAPI.DisableWardPlayerIsIn(_pieceposition, false);
                     }
