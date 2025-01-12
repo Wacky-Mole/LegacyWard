@@ -11,7 +11,6 @@ using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using fastJSON;
 using HarmonyLib;
-using KeyManager;
 using PieceManager;
 using ServerSync;
 using TMPro;
@@ -23,11 +22,10 @@ using WardIsLove;
 namespace LegacyWard
 {
     [BepInPlugin(ModGUID, ModName, VERSION)]
-    [KeyManager.VerifyKey(Author +"/" + ModName, LicenseMode.DedicatedServer)]
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.1.0";
+        internal const string VERSION = "1.1.1";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -142,48 +140,6 @@ namespace LegacyWard
         }
 
 
-        [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.Start))]
-        public static class FejdStartupPatch
-        {
-            static void Postfix(FejdStartup __instance)
-            {
-                if (isServer)
-                    return;
-
-
-                if (ZNet.m_onlineBackend == OnlineBackendType.PlayFab)
-                {
-
-                    _thistype._harmony.Patch(AccessTools.DeclaredMethod(typeof(ZPlayFabMatchmaking), nameof(ZPlayFabMatchmaking.CreateLobby)),
-                         postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(FejdStartupPatch),
-                             nameof(gamepassServer))));
-
-                }
-                else if (ZNet.m_onlineBackend == OnlineBackendType.Steamworks)
-                {
-                    _thistype._harmony.Patch(AccessTools.DeclaredMethod(typeof(ZSteamMatchmaking), nameof(ZSteamMatchmaking.RegisterServer)),
-                        postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(FejdStartupPatch),
-                            nameof(steamServer))));
-                }
-
-            }
-
-            private static void steamServer()
-            {
-                _thistype.Logger.LogError("Steam Lobby is active");
-                Application.Quit();
-
-            }
-
-            private static void gamepassServer()
-            {
-                _thistype.Logger.LogError("Zplay Lobby is active");
-                Application.Quit();
-            }
-
-        }
-
-
         [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
         private static class ZNetScene_Awake_Patch
         {
@@ -288,11 +244,6 @@ namespace LegacyWard
 
             public static bool CanBuild(Vector3 pos)
             {
-                if (KeyManager.KeyManager.CheckAllowed() == State.Verified) { }
-                else
-                {
-                   Application.Quit();
-                }
 
                 foreach (WackyWard_Component instance in _instances)
                 {

@@ -78,10 +78,6 @@
     <Reference Include="fastJSON">
       <HintPath>.\fastJSON.dll</HintPath>
     </Reference>
-    <Reference Include="KeyManager, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\KeyManager.dll</HintPath>
-    </Reference>
     <Reference Include="PieceManager">
       <HintPath>Libs\PieceManager.dll</HintPath>
     </Reference>
@@ -165,9 +161,6 @@
     <Content Include=".idea\.idea.WackyWard.dir\.idea\workspace.xml" />
     <Content Include="environment.props" />
     <Content Include="ILRepack.targets" />
-    <Content Include="KeyManager.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="LegacyWard\icon.png" />
     <Content Include="Libs\PieceManager.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -199,11 +192,7 @@
     <Target Name="AfterBuild">
     </Target>
 -->
-  <UsingTask AssemblyFile="KeyManager.dll" TaskName="KeyManager.Seal" />
-  <Target Name="KeyManager" AfterTargets="ILRepack">
-    <Seal DLL="$(TargetPath)" />
-  </Target>
-  <Target Name="GetAssemblyVersion" AfterTargets="KeyManager">
+  <Target Name="GetAssemblyVersion" AfterTargets="ILRepack">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
       <Output TaskParameter="Assemblies" ItemName="Targets" />
     </GetAssemblyIdentity>

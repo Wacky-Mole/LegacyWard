@@ -1,5 +1,5 @@
-# LegacyWard Mod 
-By WackyMole
+# Odin's Legacy Ward 
+By WackyMole/OdinPlus
 
 
 ![LegacyWithCircle](https://wackymole.com/hosts/legacywardwithred.png)
@@ -16,17 +16,6 @@ Welcome to LegacyWard, a Valheim mod that introduces a unique protection system 
 - **Claiming System:** A rare token is introduced as part of the mod, enabling players to claim a protected build as their own. This adds an element of rarity and strategy to the mod.
 
 - **Reverse Ward Concept:** LegacyWard operates as a reverse ward, safeguarding structures instead of keeping entities out. This innovative approach enhances the immersive nature of Valheim.
-****
-
-## <span style="color:red"> Semi-Private Mod </span>
-
-LegacyWard is intended for semi-private use. It is primarily designed for my Server (whenever that happens). 
-
-<span style="color:red">This mod is configured to work in single-player mode only. Cooperative play or dedicated servers will auto-abort when attempting to use LegacyWard.</span>
-
-Feel free to download and enjoy LegacyWard on your local world.
-
-<span style="color:red"> TLDR. This mod will not work on your Server! </span>
 
 ## Installation
 
@@ -45,18 +34,13 @@ Feel free to download and enjoy LegacyWard on your local world.
 
 ![Legacy UI](https://wackymole.com/hosts/legacywardui.png)
 
+
 ## Compatibility
 
 LegacyWard is designed to work with other mods that do not interfere with its core functionality. Ensure compatibility by checking mod compatibility lists or community forums.
 
-This mod deactives normal wards and WIL wards when active. (pending future api)
+This mod deactives normal wards and WIL wards when active. 
 
+I'll add Arcane Ward in the future.
 
-
-## Disclaimer
-
-LegacyWard is a third-party modification and is not officialz`ly endorsed or supported by the developers of Valheim. Use the mod at your own risk. Always back up your game saves before installing mods.
-
-Happy adventuring with LegacyWard!
-
-[![KeyManager Disclaimer](https://noobtrap.eu/images/keymanager_disclaimer_server.png)](https://key.sayless.eu/faq.php)
+<a href="https://discord.gg/mbkPcvu9ax">![Links](https://noobtrap.eu/images/crystallights/potionsplusfooter.png)</a>
