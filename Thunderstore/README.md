@@ -1,4 +1,4 @@
-# Odin's Legacy Ward 
+# Legacy Ward 
 By WackyMole/OdinPlus
 
 
@@ -44,3 +44,6 @@ This mod deactives normal wards and WIL wards when active.
 I'll add Arcane Ward in the future.
 
 <a href="https://discord.gg/mbkPcvu9ax">![Links](https://noobtrap.eu/images/crystallights/potionsplusfooter.png)</a>
+
+
+https://github.com/Wacky-Mole/LegacyWard
