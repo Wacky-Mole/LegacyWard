@@ -25,7 +25,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.1.1";
+        internal const string VERSION = "1.1.2";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -88,7 +88,7 @@ namespace LegacyWard
             Ward_Prefab = asset.LoadAsset<GameObject>("WackyWard");
             
             //BuildPiece Ward_PrefabBP = new BuildPiece("wackyward", "WackyWard");
-            //Ward_Prefab = Ward_PrefabBP.Prefab;
+            //Ward_Prefab = Ward_PrefabBP.Prefab;   
             Ward_Prefab.AddComponent<WackyWard_Component>();
             Ward_Prefab.GetComponent<Piece>().m_name = "Legacy Ward";
             Ward_Prefab.GetComponent<Piece>().m_description = "Legacy Ward sets in the Center";
@@ -886,7 +886,7 @@ namespace LegacyWard
                 return WackyWard_Component.AllowAction(__instance.transform.position);
             }
         }
-
+        /*
         [HarmonyPatch(typeof(Player), nameof(Player.AutoPickup))]
         private static class Player_AutoPickup_Patch
         {
@@ -895,7 +895,7 @@ namespace LegacyWard
                 return WackyWard_Component.AllowAction(__instance.transform.position, false);
             }
         }
-
+        */
         [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.Damage))]
         private static class WearNTear_Damage_Patch
         {
