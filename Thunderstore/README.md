@@ -35,12 +35,6 @@ Welcome to LegacyWard, a Valheim mod that introduces a unique protection system 
 ![Legacy UI](https://wackymole.com/hosts/legacywardui.png)
 
 
-FAQ
-
-WardMaxFuel is in Seconds, 32bit signed. So 2,147,483,647 limit. Greater than 68 Years if the game was running all the time. Example 60 * 60 * 24 * 7*3 = 21 days
-
-WardFuelPrefabs: Can have multiple items in it. "Stone, 100, Coal, 50, Wood, 25"
-
 ## Compatibility
 
 LegacyWard is designed to work with other mods that do not interfere with its core functionality. Ensure compatibility by checking mod compatibility lists or community forums.

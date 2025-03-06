@@ -13,6 +13,7 @@ using fastJSON;
 using HarmonyLib;
 using PieceManager;
 using ServerSync;
+using Splatform;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -25,7 +26,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.1.2";
+        internal const string VERSION = "1.1.3";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -325,8 +326,8 @@ namespace LegacyWard
                 {
                     Setup(Game.instance.GetPlayerProfile().GetName(),
                         ZNet.m_onlineBackend == OnlineBackendType.Steamworks
-                            ? PrivilegeManager.GetNetworkUserId().Split('_')[1]
-                            : PrivilegeManager.GetNetworkUserId());
+                            ? PlatformManager.DistributionPlatform.LocalUser.PlatformUserID.m_userID.Split('_')[1]
+                            : PlatformManager.DistributionPlatform.LocalUser.PlatformUserID.m_userID);
                 }
 
                 _areaMarker_main.gameObject.SetActive(false);
@@ -696,7 +697,9 @@ namespace LegacyWard
             string folder = Path.Combine(Paths.ConfigPath, "WackyWard");
             if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
             _wardManager = new WardManager(Path.Combine(folder, "WardData.json"));
-            VIPplayersList = new SyncedList(Path.Combine(folder, "VIPplayers.txt"), "");
+            VIPplayersList = new SyncedList(
+                new FileHelpers.FileLocation(FileHelpers.FileSource.Local, Path.Combine(folder, "VIPplayers.txt")),
+                     "");
             MaxAmountOfWards =
                 Config.Bind("WardOne", "MaxAmountOfWards", 3, "Max amount of wards");
             MaxAmountOfWards_VIP =
