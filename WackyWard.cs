@@ -26,7 +26,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.1.3";
+        internal const string VERSION = "1.1.4";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -320,19 +320,49 @@ namespace LegacyWard
                 _instances.Add(this);
                 _piece = GetComponent<Piece>();
                 _container = GetComponentInChildren<Container>();
-                _wardMaterials = transform.GetComponentsInChildren<MeshRenderer>(true).Select(x => x.material).ToList();
+                _wardMaterials = new List<Material>();
+
+                foreach (var mr in transform.GetComponentsInChildren<MeshRenderer>(true))
+                {
+                    // mr.materials is an array. It can be length 0.
+                    var mats = mr.materials;
+                    if (mats == null || mats.Length == 0) continue;
+
+                    foreach (var mat in mats)
+                    {
+                        if (mat != null)
+                            _wardMaterials.Add(mat);
+                    }
+                }
+
                 InvokeRepeating(nameof(UpdateStatus), 1, 1);
                 if (_znet.IsOwner() && GetCreatorName() == "")
                 {
-                    Setup(Game.instance.GetPlayerProfile().GetName(),
-                        ZNet.m_onlineBackend == OnlineBackendType.Steamworks
-                            ? PlatformManager.DistributionPlatform.LocalUser.PlatformUserID.m_userID.Split('_')[1]
-                            : PlatformManager.DistributionPlatform.LocalUser.PlatformUserID.m_userID);
+                    string rawId = PlatformManager.DistributionPlatform.LocalUser.PlatformUserID.m_userID;
+                    string finalId;
+
+                    if (ZNet.m_onlineBackend == OnlineBackendType.Steamworks)
+                    {
+                        // Steam sometimes gives "Steam_123456789". Sometimes not.
+                        var parts = rawId.Split('_');
+                        finalId = parts.Length > 1 ? parts[1] : parts[0];
+                    }
+                    else
+                    {
+                        finalId = rawId;
+                    }
+
+                    Setup(Game.instance.GetPlayerProfile().GetName(), finalId);
                 }
+
 
                 _areaMarker_main.gameObject.SetActive(false);
                 _text.ForEach(x => x.text = CustomString);
-                _fog = transform.Find("Scaler/Fog").gameObject;
+
+                // Safely grab fog object. Some variants (edge vs center) may not have it.
+                var fogT = transform.Find("Scaler/Fog");
+                _fog = fogT != null ? fogT.gameObject : null;
+
             }
 
             private int LastFlashTime;
@@ -411,16 +441,26 @@ namespace LegacyWard
             private void UpdateStatus()
             {
                 bool _enabled = IsEnabled;
-                if (_enabled)
+
+                // glow on/off
+                if (_wardMaterials != null)
                 {
-                    _wardMaterials.ForEach(m => m.EnableKeyword("_EMISSION"));
-                    _fog.SetActive(true);
+                    foreach (var mat in _wardMaterials)
+                    {
+                        if (mat == null) continue;
+                        if (_enabled)
+                            mat.EnableKeyword("_EMISSION");
+                        else
+                            mat.DisableKeyword("_EMISSION");
+                    }
                 }
-                else
+
+                // fog on/off
+                if (_fog != null)
                 {
-                    _wardMaterials.ForEach(m => m.DisableKeyword("_EMISSION"));
-                    _fog.SetActive(false);
+                    _fog.SetActive(_enabled);
                 }
+
 
                 if (Player.m_localPlayer && IsInside_Main(Player.m_localPlayer.transform.position))
                 {
