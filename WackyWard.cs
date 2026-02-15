@@ -26,7 +26,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.1.4";
+        internal const string VERSION = "1.1.5";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
