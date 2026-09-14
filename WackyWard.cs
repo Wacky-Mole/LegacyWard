@@ -112,6 +112,8 @@ namespace LegacyWard
             FlashShield_Fuel = asset_vfx.LoadAsset<GameObject>("WackyWard_Fuel");
             FlashShield_Activate = asset_vfx.LoadAsset<GameObject>("WackyWard_Activate");
             FlashShield_Deactivate = asset_vfx.LoadAsset<GameObject>("WackyWard_Deactivate");
+            AudioMan audioMan = FindObjectOfType<AudioMan>();
+            if (audioMan != null) ConfigureAudioSources(audioMan);
             if (isServer) ServerSideInit();
 
             _harmony.PatchAll();
@@ -211,20 +213,27 @@ namespace LegacyWard
         {
             static void Postfix(AudioMan __instance)
             {
-                foreach (GameObject allAsset in asset.LoadAllAssets<GameObject>())
-                {
-                    foreach (AudioSource audioSource in allAsset.GetComponentsInChildren<AudioSource>(true))
-                    {
-                        audioSource.outputAudioMixerGroup = __instance.m_masterMixer.outputAudioMixerGroup;
-                    }
-                }
+                ConfigureAudioSources(__instance);
+            }
+        }
 
-                foreach (GameObject allAsset in asset_vfx.LoadAllAssets<GameObject>())
+        private static void ConfigureAudioSources(AudioMan audioMan)
+        {
+            var sfxGroup = audioMan.m_masterMixer.FindMatchingGroups("SFX")[0];
+
+            foreach (GameObject allAsset in asset.LoadAllAssets<GameObject>())
+            {
+                foreach (AudioSource audioSource in allAsset.GetComponentsInChildren<AudioSource>(true))
                 {
-                    foreach (AudioSource audioSource in allAsset.GetComponentsInChildren<AudioSource>(true))
-                    {
-                        audioSource.outputAudioMixerGroup = __instance.m_masterMixer.outputAudioMixerGroup;
-                    }
+                    audioSource.outputAudioMixerGroup = sfxGroup;
+                }
+            }
+
+            foreach (GameObject allAsset in asset_vfx.LoadAllAssets<GameObject>())
+            {
+                foreach (AudioSource audioSource in allAsset.GetComponentsInChildren<AudioSource>(true))
+                {
+                    audioSource.outputAudioMixerGroup = sfxGroup;
                 }
             }
         }
@@ -383,7 +392,19 @@ namespace LegacyWard
                 {
                      go = Instantiate(FlashShield, transform.position, Quaternion.identity);
                 }
-                    
+
+                AudioMan audioMan = FindObjectOfType<AudioMan>();
+                var sfxGroups = audioMan != null
+                    ? audioMan.m_masterMixer.FindMatchingGroups("SFX")
+                    : null;
+                foreach (AudioSource audioSource in go.GetComponentsInChildren<AudioSource>(true))
+                {
+                    if (sfxGroups != null && sfxGroups.Length > 0)
+                        audioSource.outputAudioMixerGroup = sfxGroups[0];
+                    audioSource.spatialBlend = 0f;
+                    audioSource.Play();
+                }
+
                 go.transform.Find("Dome").localScale = new Vector3(GetMainRadius(), GetMainRadius(), GetMainRadius());
             }
 
