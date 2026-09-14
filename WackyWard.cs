@@ -26,7 +26,7 @@ namespace LegacyWard
     public class Wackyward : BaseUnityPlugin
     {
         internal const string ModName = "LegacyWard";
-        internal const string VERSION = "1.1.5";
+        internal const string VERSION = "1.1.6";
         internal const string Author = "WackyMole";
         internal const string ModGUID = Author + "." + ModName;
         private static AssetBundle asset;
@@ -672,6 +672,11 @@ namespace LegacyWard
             {
                 return "Ward";
             }
+
+            public float GetHoverOffset()
+            {
+                return 0f;
+            }
         }
 
 
@@ -935,7 +940,7 @@ namespace LegacyWard
         {
             private static bool Prefix(Player __instance)
             {
-                return WackyWard_Component.AllowAction(__instance.transform.position, false);
+                return WackyWard_Component.AllowAction(__instance.transform.position);
             }
         }
         */
@@ -958,7 +963,7 @@ namespace LegacyWard
         {
             private static bool Prefix(WearNTear __instance)
             {
-                return !WackyWard_Component.TryFindWard(__instance.transform.position);
+                return WackyWard_Component.AllowAction(__instance.transform.position);
             }
         }
 

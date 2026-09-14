@@ -8,3 +8,4 @@
 | 1.1.3     | - Update for 220.3 |
 | 1.1.4     | - bug Fix|
 | 1.1.5     | - Update for 221.10. |
+| 1.1.6     | - Updated For Deep North |
